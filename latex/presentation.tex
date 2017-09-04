@@ -9,6 +9,9 @@
 \pgfdeclareimage[height=0.5cm]{university-logo}{figures/imperial.pdf}
 \logo{\pgfuseimage{university-logo}}
 \begin{document}
+\tikzstyle{every node}=[draw=black,thick,anchor=west]
+\tikzstyle{selected}=[draw=red,fill=red!30]
+\tikzstyle{optional}=[dashed,fill=gray!50]
 \begin{frame}
 \titlepage
 \note{extended an energy profiler for Android Applications\\
@@ -143,10 +146,12 @@ how does this work?}
     \usebeamerfont{title}Demo\par%
   \end{beamercolorbox}
   \vfill
+\note{unlock phone}
 \end{frame}
 %%%%%%%%%%%%%%% HARDWARE
 %
 \section{Hardware-usage and tail-energy accounting}
+\note{First, define tail energy}
 \begin{frame}{Tail-energy}
 \note{
 definition, how possible?\\
@@ -289,6 +294,7 @@ if in tail mode: check for time condition
     \usebeamerfont{title}Demo\par%
   \end{beamercolorbox}
   \vfill
+\note{git checkout}
 \end{frame}
 %
 %
@@ -343,18 +349,56 @@ MainActivity$SendGet.run {ACTIVE: 1.57, IDLE: 0.84,
 \end{lstlisting}
 \end{frame}
 %
-%%%%%%%%%%%%%%% CONCLUSION
+%%%%%%%%%%%%%%% OTHER WORK
 %
-\section{Conclusion}
-\begin{frame}{Outlook}
+\section{Other work}
+\note{
+other important contributions\\
+Important effort were made to \alert{refactor and improve usability}\\
+leave to QA
+}
+%
+%
+\begin{frame}{Source-line level accounting (1/2)}
+\begin{block}{Problem}
 \begin{itemize}
-\item Source line-level energy estimates
-\item Evaluation of \orka{}'s accuracy using \petra{}
-\item Preparatory work: refactoring process and usability features
+\item Method-level estimates highlight costly methods, not energy bugs
+\item Developers need even more fine-grained guidance
 \end{itemize}
+\end{block}
+\begin{block}{Implementation}
+\begin{itemize}
+\item Extended the injector and the traces analyser
+\end{itemize}
+\end{block}
 \end{frame}
 %
 %
+\begin{frame}[fragile]{Source-line level accounting (2/2)}
+\centering
+%[caption=Example of reconstructed source code providing fine-grained guidance]
+{\tiny%\footnotesize
+\begin{lstlisting}
+method RecList.onCreate, Average cost: 0.0197754308, Calls: 1.0
+   2.64% l-1
+   1.45% l192 calling RecList.InitRepeatButton
+   0.88% l227 calling RecList.InitThemedButtons
+   0.57% l229 calling Pref.getPlayingFilePath
+  29.04% l247 calling RecList.updateSongList
+  21.80% l257 calling android.os.Bundle.getString
+  21.80% l258 calling android.os.Bundle.getString
+  21.80% l260 calling android.os.Bundle.getString
+\end{lstlisting}}
+\end{frame}
+%
+%
+\begin{frame}{Evaluation of \orka{}}
+TODO
+\end{frame}
+%
+%%%%%%%%%%%%%%% CONCLUSION
+%
+\section{Conclusion}
 \begin{frame}{Summary}
 This work stands as the first software-based tool:
 \begin{enumerate}
@@ -367,6 +411,15 @@ This work stands as the first software-based tool:
 \end{frame}
 %
 %
+\begin{frame}{Future work}
+\begin{itemize}
+\item Tail-energy: last-trigger policy and extend to other componentss
+\item Improve the injector
+\item Improve accuracy
+\end{itemize}
+\end{frame}
+%
+%
 \begin{frame}
   \vfill
   \centering
@@ -374,6 +427,56 @@ This work stands as the first software-based tool:
     \usebeamerfont{title}Thank you\par%
   \end{beamercolorbox}
   \vfill
+\end{frame}
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+\begin{frame}{Refactoring}
+\begin{figure}
+\centering
+    \begin{subfigure}[b]{0.5\textwidth}
+        \centering
+\begin{tikzpicture}[%
+  grow via three points={one child at (0.5,-0.7) and
+  two children at (0.5,-0.7) and (0.5,-1.4)},
+  edge from parent path={(\tikzparentnode.south) |- (\tikzchildnode.west)}]
+  \node {main.py}
+    child { node {config.py}}
+    child { node {decomp.sh}}
+    child { node {inject.py}}
+    child { node {recomp.sh}}
+    child { node {sign.sh}}
+    child { node {simulationMaster.sh}}
+    child { node {routine.py}}
+    child { node {hardwareReader.py}};
+\end{tikzpicture}
+        \caption{Initial design}
+        \label{fig:design:init}
+    \end{subfigure}%
+    \begin{subfigure}[b]{0.5\textwidth}
+        \centering
+\begin{tikzpicture}[%
+  grow via three points={one child at (0.5,-0.7) and
+  two children at (0.5,-0.7) and (0.5,-1.4)},
+  edge from parent path={(\tikzparentnode.south) |- (\tikzchildnode.west)}]
+  \node {main.py}
+    child { node {helpers.py}}
+    child { node {config.py}}
+    child { node {instrument.sh}
+    	child { node {inject.py}}}
+    child [missing] {}
+    child { node {simulationMaster.sh}}
+    child { node {APIAnalyser.py}
+    	child { node {routine.py}}}
+    child [missing] {}
+    child { node {hardwareAnalyser.py}};
+\end{tikzpicture}
+        \caption{New design}
+        \label{fig:design:new}
+    \end{subfigure}%
+\caption{\orka{}'s design}
+\label{fig:design}
+\end{figure}
 \end{frame}
 %
 %
