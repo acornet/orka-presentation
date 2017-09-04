@@ -1,0 +1,7 @@
+\frametitle{Network analyser: results}
+\begin{lstlisting}
+MainActivity.<init> {ACTIVE: 0.0, IDLE: 0.01,
+  TAIL: 0.0}
+MainActivity$SendGet.run {ACTIVE: 1.57, IDLE: 0.84,
+  TAIL: 1.62}
+\end{lstlisting}
