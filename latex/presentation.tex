@@ -1,5 +1,7 @@
 \input{includes}
 \setbeameroption{show notes on second screen=right}
+%\setbeameroption{show only notes}
+%\setbeameroption{show notes}
 \title[Project presentation]{\textsc{Hardware usage accounting and source-line level energy estimates on Android}}
 \author{Alexandre \textsc{Cornet}\\ {\footnotesize supervised by Dr. Anandha \textsc{Gopalan}}}
 \institute{Imperial College London}
@@ -9,8 +11,8 @@
 \begin{document}
 \begin{frame}
 \titlepage
-\note[enumerate]{
-\item building an energy profiler for Android Applications}
+\note{extended an energy profiler for Android Applications\\
+specifically, focussed on hardware and source line level estimates}
 \end{frame}
 %
 \iffalse
@@ -24,6 +26,9 @@
 %%%%%%%%%%%%%%% PROBLEM
 %
 \section{Problem}
+\note{What problem did I try to solve?\\
+App dev doing well\\
+But keep getting this}
 % FIXME text box on top of frame
 \begin{frame}{Energy efficiency matters}
 \begin{columns}
@@ -38,11 +43,21 @@
 \end{figure}
 \end{column}
 \end{columns}
+\note{
+angry feedback regarding the energy consumption of your app\\
+realize energy eff matters\\
+decide to optimise your code for it\\%and to  \alert{find energy bugs}
+What are your options?
+}
 \end{frame}
 %
 %%%%%%%%%%%%%%% RELATED WORK
 %
 \section{Related work}
+\note{
+What's the related work of this project?\\
+Best option is definitely to use an energy profiler
+}
 \begin{frame}{Energy-profilers}
 \begin{itemize}
 \item Highlight the energy-greediest parts of the code
@@ -54,6 +69,17 @@
 \end{enumerate}
 \item Yet, \alert{no solution accessible} to the majority of developers
 \end{itemize}
+\note{
+tools which \alert{provide estimates} of the consumption of the code\\
+are able to highlight...\\~\\
+3 types...\\
+hw and model-based rely on \alert{expensive power measurement platforms}\\
+financial and practical overhead\\
+software-based tools introduced to move away from this requirements\\
+however, as this project started, \alert{no publicly available tool}\\~\\
+hence \alert{not accessible} to majority
+So, what's missing to solve our problem?
+}
 \end{frame}
 %
 %
@@ -62,21 +88,42 @@ A software-based energy-profiler:
 \begin{enumerate}
 \item providing hardware-usage and \alert{tail-energy} accounting,
 \item providing \alert{source-line level} estimates,
-\item open-sourced.
+\item available as an \alert{open-sourced} application.
 \end{enumerate}
+\note{
+After the reviewing the state-of-art literature, my opinion was there is a need for...\\
+}
+\note[item]{
+tail-energy is responsible for a \alert{significant fraction} of the drain}
+\note[item]{existing profilers highlight the most costly methods\\
+but \alert{still the responsibility of the developers} to find the energy}
+\note[item]{
+despite the many research contributions focussing on ...\\
+developers still don't have access to...\\
+that's why we \alert{need a common effort} in the community.}
+\note[item]{were the aims of my project\\
+After reviewing the related work...\\
+\alert{extending an existing solution}, namely Orka = option to fulfill them.
+}
 \end{frame}
 %
 %%%%%%%%%%%%%%% ORKA
 %
 \section{Orka}
+\note{introduce orka}
 \begin{frame}{\orka{}: overview}
 \begin{itemize}
-\item Input: Tested \apk{} file and \monkeyrunner{} test script
-\item Output: Energy estimates at the method-level
+%\item Input: Tested \apk{} file and \monkeyrunner{} test script
+%\item Output: Energy estimates at the method-level
 \item Main assumption:
 $$ cost(routine) = \sum_{API \in routine} cost(API)$$
 \item Rely on \alert{instrumentation} and on the Android emulator
 \end{itemize}
+\note{
+Based on \alert{LV work}, it approximates\\
+Based on this assumption, it \alert{tallies calls} to the A. API\\
+Rely on \alert{instrumentation}
+}
 \end{frame}
 %
 %
@@ -84,6 +131,8 @@ $$ cost(routine) = \sum_{API \in routine} cost(API)$$
 \begin{figure}
         \includegraphics[width=\textwidth]{figures/orkaworkflow.pdf}
 \end{figure}
+\note{in and out\\
+how does this work?}
 \end{frame}
 %
 %
@@ -99,18 +148,27 @@ $$ cost(routine) = \sum_{API \in routine} cost(API)$$
 %
 \section{Hardware-usage and tail-energy accounting}
 \begin{frame}{Tail-energy}
+\note{
+definition, how possible?\\
+power behaviour can be modelled using a \alert{power state machine}\\
+always \alert{two states at least}\\
+with or without workflow\\~\\
+for many mobile component, a \alert{third state}, the tail-state\\
+continue to drain the battery after the workflow has been processed
+}
 \begin{columns}
 \begin{column}{0.5\textwidth}
-\begin{figure}
-% FIXME better breakdown
-	\includegraphics[width=\textwidth]{figures/wifi_statemachine.png} 
-\end{figure}
+\begin{itemize}
+\item Tail-energy: the component stays in a high power-state \alert{after} processing a workfow.
+\end{itemize}
 \end{column}
 \pause
 \begin{column}{0.5\textwidth}
-\begin{itemize}
-\item Tail-energy: the component stays in a high power-state \alert{after} completing a task.
-\end{itemize}
+\begin{figure}
+	\centering
+	\includegraphics[width=\textwidth]{figures/wifi_statemachine.png} 
+	\caption{Power-state machine of a Wi-Fi antenna}
+\end{figure}
 \end{column}
 \end{columns}
 \end{frame}
@@ -119,48 +177,52 @@ $$ cost(routine) = \sum_{API \in routine} cost(API)$$
 \begin{frame}{Problem}
 \begin{columns}
 \begin{column}{0.5\textwidth}
-\begin{figure}
-% FIXME better breakdown
-	\includegraphics[width=\textwidth]{figures/hw_breakdown.png} 
-\end{figure}
-\end{column}
-\begin{column}{0.5\textwidth}
 The breakdown by component:
 \begin{itemize}
 \item is \alert{difficult to interpret},
 \item doesn't account for \alert{tail-energy}.
 \end{itemize}
-\end{column}
-\end{columns}
-\end{frame}
-%
-%
-\begin{frame}{Aims (1/2)}
+\begin{block}{Aims}
 \begin{itemize}
 \item Map hardware-usage back to the code
 \item Account for tail-energy
 \end{itemize}
-\vskip0pt plus.5fill
-\begin{block}{Simplifications}
+\end{block}
+\end{column}
+\begin{column}{0.5\textwidth}
+\begin{figure}
+% FIXME better breakdown
+	\includegraphics[width=\textwidth]{figures/hw_breakdown.png} 
+\end{figure}
+\end{column}
+\end{columns}
+\note{doesn't know what part of the code is responsible for the drain}
+\end{frame}
+%
+%
+\begin{frame}[fragile]{Simplifications}
 \begin{itemize}
 \item Only for Wi-Fi
 \item At the method level
 \item Focus on time ($E= P \Delta_t$)
 \end{itemize}
+\begin{block}{Specification}
+\begin{itemize}
+\item Produce energy tuples
+\end{itemize}
 \end{block}
-\end{frame}
-%
-%
-\begin{frame}[fragile]{Aims (2/2)}
-\begin{block}{Desired output}
-%[frame=single, emph={cout}, emphstyle={\color{blue}}]
 \begin{lstlisting}
 MainActivity.<init> {ACTIVE: 0.0, IDLE: 0.01,
   TAIL: 0.0}
 MainActivity$SendGet.run {ACTIVE: 1.57, IDLE: 0.84,
   TAIL: 1.62}
 \end{lstlisting}
-\end{block}         
+\note{
+I/O consumes the most energy -- only Wi-FI\\
+Simple relation between time and energy -- focus on time\\~\\
+Tuples represent the \alert{time spent in each mode } by the Wi-Fi antenna, which is attributed to the method\\
+Because of the method XX, the antenna spent ...
+}
 \end{frame}
 %
 %
@@ -172,37 +234,20 @@ MainActivity$SendGet.run {ACTIVE: 1.57, IDLE: 0.84,
 \end{block}
 \begin{block}{Requirements}
 \begin{itemize}
-\item Log when routines start and terminate
-\item Log when Wi-Fi switches from one state to another
+\item Monitoring the call-stack
+\item Monitoring the power state of Wi-Fi
 \end{itemize}
 \end{block}
+\note{
+call-stack: know which routine are executed at any time\\
+Leave call-stack to QA\\~\\
+
+Wifi power state: Not possible to monitor directly as not logged by OS\\
+}
 \end{frame}
 %
 %
-\begin{frame}[fragile]{Monitoring the call-stack}
-\begin{columns}
-\begin{column}{0.6\textwidth}
-% 09-04 12:52:26.642 1474 9092 I orka: Ind
-\begin{lstlisting}
-12:52:26.642 entering foo
-12:52:26.742 	API call api1
-12:52:26.842 entering bar
-12:52:26.942 	API call api2
-12:52:27.042 exiting bar
-12:52:27.142 exiting foo
-\end{lstlisting}
-\end{column}
-\begin{column}{0.4\textwidth}
-\begin{itemize}
-\item Extended the injector to \alert{log when methods return}
-\item Used \logcat{} in \texttt{threadtime} mode to \alert{include timestamps}
-\end{itemize}
-\end{column}
-\end{columns}
-\end{frame}
-%
-%
-\begin{frame}[fragile]{Monitoring the energy state of Wi-Fi}
+\begin{frame}[fragile]{Monitoring the power state of Wi-Fi}
 % FIXME two col, add state machine
 \begin{itemize}
 \item We need to monitor what trigger transitions: \alert{network traffic}.
@@ -215,33 +260,28 @@ idx iface uid_tag_int cnt_set rx_bytes rx_packets tx_bytes tx_packets
 2 wlan0 0 0 200888 1096 79636 888
 3 wlan0 0 1 0 0 0 0
 \end{lstlisting}
-\end{frame}
-%
-%
-\begin{frame}{Network monitoring: algorithm}
-\begin{small}
-\begin{algorithm}[H]
-%\KwIn{Active ADB connection to an actual device}
-\KwOut{Logs of the energy states of the Wi-Fi antenna}
-Get first network statistics $S_0$ at current time $t_0$\;
-$state \leftarrow \texttt{IDLE}$\;
-\While{True}{
-Get network statistics $S_1$ at current time $t_1$\;
-\uIf{$S_0 \neq S_1$}
-{$state \leftarrow \texttt{ACTIVE}$\;}
-\ElseIf{state = \texttt{ACTIVE}}{$state \leftarrow \texttt{TAIL}$\;$tail_{start} \leftarrow t_0$\;}
-\If{$state = \texttt{TAIL}$ {\normalfont \textbf{and}} $t_1 - tail_{start} \geq tail_{time}$}
-{Log $(t_0, state)$\;
-$t_0 \leftarrow tail_{start} + tail_{time}$\;
-$state \leftarrow \texttt{IDLE}$\;}
-Log $(t_0, state)$\;
-$t_0 \leftarrow t_1$, $S_0 \leftarrow S_1$\;
+\note{
+OS log the number of bytes send and received by each application
 }
-\end{algorithm}
-\end{small}
+\end{frame}
+% FIXME
+%
+%
+\begin{frame}{Implementing the power state-machine}
+\begin{figure}
+% FIXME better breakdown
+	\includegraphics[height=0.6\textheight]{figures/wifi_statemachine.png} 
+	\caption{Power-state machine of a Wi-Fi antenna}
+\end{figure}
+\note{Aim: Deduce Wi-Fi switches from network monitoring\\
+leave more detailed speudo QA\\~\\
+if any traffic: active\\
+no traffic from active: tail\\
+if in tail mode: check for time condition
+}
 \end{frame}
 %
-%
+% 
 \begin{frame}
   \vfill
   \centering
@@ -249,28 +289,6 @@ $t_0 \leftarrow t_1$, $S_0 \leftarrow S_1$\;
     \usebeamerfont{title}Demo\par%
   \end{beamercolorbox}
   \vfill
-\end{frame}
-%
-%
-\begin{frame}[fragile]{Network monitoring: results}
-\begin{lstlisting}
-1503657227.287407 ACTIVE
-1503657227.323574 TAIL
-1503657227.359771 TAIL
-1503657227.394717 TAIL
-1503657227.428777 ACTIVE
-1503657227.467203 TAIL
-1503657227.518874 ACTIVE
-1503657227.589833 ACTIVE
-1503657227.644556 TAIL
-1503657227.681700 TAIL
-1503657227.716493 TAIL
-1503657227.753575 TAIL
-1503657227.789498 TAIL
-1503657227.829724 TAIL
-1503657227.864556 IDLE
-1503657227.882524 IDLE
-\end{lstlisting}
 \end{frame}
 %
 %
@@ -303,6 +321,16 @@ $t_0 \leftarrow t_1$, $S_0 \leftarrow S_1$\;
 \item Replay both logs
 \item Tally time spent in each mode for all methods
 \end{itemize}
+\note{
+merge sort\\
+leave algo for QA\\~\\
+let's log processed until t0, state up to date\\
+let's fetch next entry at t0 + delta t\\
+state is constant during delta t\\
+add delta t in current state to all method in the call stack\\
+update state\\
+loop
+}
 \end{frame}
 %
 %
@@ -318,6 +346,15 @@ MainActivity$SendGet.run {ACTIVE: 1.57, IDLE: 0.84,
 %%%%%%%%%%%%%%% CONCLUSION
 %
 \section{Conclusion}
+\begin{frame}{Outlook}
+\begin{itemize}
+\item Source line-level energy estimates
+\item Evaluation of \orka{}'s accuracy using \petra{}
+\item Preparatory work: refactoring process and usability features
+\end{itemize}
+\end{frame}
+%
+%
 \begin{frame}{Summary}
 This work stands as the first software-based tool:
 \begin{enumerate}
@@ -330,15 +367,6 @@ This work stands as the first software-based tool:
 \end{frame}
 %
 %
-\begin{frame}{Outlook}
-\begin{itemize}
-\item Source line-level energy estimates
-\item Evaluation of \orka{}'s accuracy using \petra{}
-\item Preparatory work: refactoring process and usability features
-\end{itemize}
-\end{frame}
-%
-%
 \begin{frame}
   \vfill
   \centering
@@ -347,4 +375,106 @@ This work stands as the first software-based tool:
   \end{beamercolorbox}
   \vfill
 \end{frame}
+%
+%
+\begin{frame}[fragile]{Monitoring the call-stack}
+\note{
+Log when routines start and terminate\\
+initial version only log when method enter\\
+changed the output format of orka\\
+}
+\begin{columns}
+\begin{column}{0.4\textwidth}
+\begin{itemize}
+\item Extended the injector to \alert{log when methods return}
+\item Used \logcat{} in \texttt{threadtime} mode to \alert{include timestamps}
+\end{itemize}
+\end{column}
+\begin{column}{0.6\textwidth}
+% 09-04 12:52:26.642 1474 9092 I orka: Ind
+\begin{lstlisting}
+12:52:26.642 entering foo
+12:52:26.742 	API call api1
+12:52:26.842 entering bar
+12:52:26.942 	API call api2
+12:52:27.042 exiting bar
+12:52:27.142 exiting foo
+\end{lstlisting}
+\end{column}
+\end{columns}
+\end{frame}
+%
+%
+\begin{frame}{Network monitoring: algorithm}
+\begin{small}
+\begin{algorithm}[H]
+%\KwIn{Active ADB connection to an actual device}
+\KwOut{Logs of the energy states of the Wi-Fi antenna}
+Get first network statistics $S_0$ at current time $t_0$\;
+$state \leftarrow \texttt{IDLE}$\;
+\While{True}{
+Get network statistics $S_1$ at current time $t_1$\;
+\uIf{$S_0 \neq S_1$}
+{$state \leftarrow \texttt{ACTIVE}$\;}
+\ElseIf{state = \texttt{ACTIVE}}{$state \leftarrow \texttt{TAIL}$\;$tail_{start} \leftarrow t_0$\;}
+\If{$state = \texttt{TAIL}$ {\normalfont \textbf{and}} $t_1 - tail_{start} \geq tail_{time}$}
+{Log $(t_0, state)$\;
+$t_0 \leftarrow tail_{start} + tail_{time}$\;
+$state \leftarrow \texttt{IDLE}$\;}
+Log $(t_0, state)$\;
+$t_0 \leftarrow t_1$, $S_0 \leftarrow S_1$\;
+}
+\end{algorithm}
+\end{small}
+\end{frame}
+%
+%
+\begin{frame}[fragile]{Network monitoring: results}
+\begin{lstlisting}
+1503657227.287407 ACTIVE
+1503657227.323574 TAIL
+1503657227.359771 TAIL
+1503657227.394717 TAIL
+1503657227.428777 ACTIVE
+1503657227.467203 TAIL
+1503657227.518874 ACTIVE
+1503657227.589833 ACTIVE
+1503657227.644556 TAIL
+1503657227.681700 TAIL
+1503657227.716493 TAIL
+1503657227.753575 TAIL
+1503657227.789498 TAIL
+1503657227.829724 TAIL
+1503657227.864556 IDLE
+1503657227.882524 IDLE
+\end{lstlisting}
+\end{frame}
+%
+%
+\begin{frame}{Network analyser: algorithm}
+\begin{small}
+\begin{algorithm}[H]
+\KwIn{\logcat{} and \netstats{} traces}
+\KwOut{Energy tuples describing the Wi-Fi activity for each injected routine}
+Initialise routine cost tuples\;
+Initialise call stack\;
+$state \leftarrow \texttt{IDLE}$\;
+\While{{\normalfont Log files contain entries left to process}}{
+Get the non-processed entry with the smallest time-stamp\;
+Add time spent since the last update in the current state to all routines in the stack\;
+Update the call stack if the entry comes from \logcat, otherwise update the $state$\;
+}
+\end{algorithm}
+\end{small}
+\note{
+let's log processed until t0, state up to date\\
+let's fetch next entry at t0 + delta t\\
+state is constant during delta t\\
+add delta t in current state to all method in the call stack\\
+update state\\
+loop
+}
+\end{frame}
+%
+%
 \end{document}
