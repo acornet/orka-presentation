@@ -1,8 +1,8 @@
 \input{includes}
-\setbeameroption{show notes on second screen=right}
+\setbeameroption{show notes on second screen=left}
 %\setbeameroption{show only notes}
 %\setbeameroption{show notes}
-\title[Project presentation]{\textsc{Hardware usage accounting and source-line level energy estimates on Android}}
+\title[Project presentation]{\textsc{Hardware-usage accounting and source-line level energy estimates on Android}}
 \author{Alexandre \textsc{Cornet}\\ {\footnotesize supervised by Dr. Anandha \textsc{Gopalan}}}
 \institute{Imperial College London}
 \date{September 2017}
@@ -14,8 +14,13 @@
 \tikzstyle{optional}=[dashed,fill=gray!50]
 \begin{frame}
 \titlepage
-\note{extended an energy profiler for Android Applications\\
-specifically, focussed on hardware and source line level estimates}
+\note{
+NO PRINTS\\
+VYGOR\\
+one page - def continu\\~\\
+
+extended an energy profiler for Android Applications\\
+specifically, focussed on hardware usage and source line level estimates}
 \end{frame}
 %
 \iffalse
@@ -48,7 +53,7 @@ But keep getting this}
 \end{columns}
 \note{
 angry feedback regarding the energy consumption of your app\\
-realize energy eff matters\\
+realize energy efficiency matters\\
 decide to optimise your code for it\\%and to  \alert{find energy bugs}
 What are your options?
 }
@@ -76,7 +81,7 @@ Best option is definitely to use an energy profiler
 tools which \alert{provide estimates} of the consumption of the code\\
 are able to highlight...\\~\\
 3 types...\\
-hw and model-based rely on \alert{expensive power measurement platforms}\\
+hardware and model-based rely on \alert{expensive power measurement platforms}\\
 financial and practical overhead\\
 software-based tools introduced to move away from this requirements\\
 however, as this project started, \alert{no publicly available tool}\\~\\
@@ -89,15 +94,15 @@ So, what's missing to solve our problem?
 \begin{frame}{What's missing?}
 A software-based energy-profiler:
 \begin{enumerate}
-\item providing hardware-usage and \alert{tail-energy} accounting,
-\item providing \alert{source-line level} estimates,
-\item available as an \alert{open-sourced} application.
+\item Providing hardware-usage and \alert{tail-energy} accounting
+\item Providing \alert{source-line level} estimates
+\item Available as an \alert{open-sourced} application
 \end{enumerate}
 \note{
 After the reviewing the state-of-art literature, my opinion was there is \alert{a need for}...\\
 explain later \alert{why important}\\
 were the \alert{aims} of my project\\
-After reviewing the related work...\alert{extending an existing solution}, namely Orka = option to fulfill them.\\
+After reviewing the related work...\alert{extending an existing solution}, namely Orka = best option to fulfill them.\\
 }
 \note[item]{
 tail-energy is responsible for a \alert{significant fraction} of the drain}
@@ -119,7 +124,7 @@ that's why we \alert{need a common effort} in the community.}
 %\item Output: Energy estimates at the method-level
 \item Main assumption:
 $$ cost(routine) = \sum_{API \in routine} cost(API)$$
-\item Rely on \alert{instrumentation} and on the Android emulator
+\item Rely on \alert{instrumentation} and on the Android \alert{emulator}
 \end{itemize}
 \note{
 Based on \alert{LV work}, it approximates\\
@@ -147,7 +152,7 @@ how does this work?}
   \vfill
 \note{
 COMMENT PRINTS\\
-ACTIVATE VYGOR\\s
+ACTIVATE VYGOR\\
 unlock phone}
 \end{frame}
 %%%%%%%%%%%%%%% HARDWARE
@@ -159,12 +164,12 @@ First, let's define tail energy
 }
 \begin{frame}{Tail-energy}
 \note{
-read definition, how?\\~\\
+definition: how possible?\\~\\
 power behaviour can be modelled using a \alert{power state machine}\\
 always \alert{two states at least}\\
 with or without workflow\\~\\
 PAUSE\\~\\
-for many mobile component, a \alert{third state}, the tail-state\\
+for many mobile components, a \alert{third state}, the tail-state\\
 entered after a workflow has been processed\\
 stay in that state for a definite time, \alert{tail-time}\\
 spend \alert{tail-energy}
@@ -215,7 +220,7 @@ The breakdown by component:
 \end{columns}
 \note{difficult to interpret: don't know what parts of the code are responsible for the drain\\
 tail-energy is responsible for a \alert{significant fraction} of the drain\\~\\
-Map: this method is method is responsible for this drain
+Map: THIS method is responsible for THIS drain
 }
 \end{frame}
 %
@@ -240,7 +245,7 @@ MainActivity$SendGet.run {ACTIVE: 1.57, IDLE: 0.84,
 \note{
 I/O consumes the most energy -- only Wi-FI\\
 Simple relation between time and energy -- focus on time\\~\\
-For one method, Tuples represent the \alert{time spent in each mode } by the Wi-Fi antenna, which is attributed to the method\\
+For one method, tuples represent the \alert{time spent in each mode } by the Wi-Fi antenna, which is attributed to the method\\
 Because of the method XX, the antenna spent ...
 }
 \end{frame}
@@ -259,7 +264,7 @@ Because of the method XX, the antenna spent ...
 \end{itemize}
 \end{block}
 \note{
-call-stack: know which routine are executed at any time\\
+call-stack: know which routines are executed at any time\\
 Leave call-stack to QA\\~\\
 
 Wifi power state: Not possible to monitor directly as not logged by OS\\
@@ -270,7 +275,7 @@ Wifi power state: Not possible to monitor directly as not logged by OS\\
 \begin{frame}[fragile]{Monitoring the power state of Wi-Fi}
 % FIXME two col, add state machine
 \begin{itemize}
-\item We need to monitor what trigger transitions: \alert{network traffic}.
+\item We need to monitor what triggers transitions: \alert{network traffic}.
 \item Leverage \texttt{proc/net/xt\_qtaguid/stats}
 \end{itemize}
 \vskip0pt plus.5fill
@@ -281,7 +286,7 @@ idx iface uid_tag_int cnt_set rx_bytes rx_packets tx_bytes tx_packets
 3 wlan0 0 1 0 0 0 0
 \end{lstlisting}
 \note{
-OS log the number of bytes send and received by each application\\
+OS logs the number of bytes send and received by each application\\
 able to fetch this file every 50ms\\
 hence able to monitor traffic with a 50ms \alert{sampling period}\\
 thanks to this, I can \alert{deduce when Wi-Fi switches}  from one state to another
@@ -350,7 +355,7 @@ git checkout}
 \end{itemize}
 \note{
 merge sort\\
-leave algo for QA
+leave algo for QA\\
 \vspace{2cm}
 let's log processed until t0, state up to date\\
 let's fetch next entry at t0 + delta t\\
@@ -376,7 +381,7 @@ MainActivity$SendGet.run {ACTIVE: 1.57, IDLE: 0.84,
 \section{Other work}
 \note{
 other important contributions\\
-Important effort were made to \alert{refactor}\\
+Important efforts were made to \alert{refactor}\\
 in order to \alert{ease the implementation} of extensions\\
 \alert{improve usability}\\
 leave to QA
@@ -391,8 +396,8 @@ leave to QA
 \item High error rate on average
 \end{itemize}
 \note{
-test env allow to enter one command to run the eval\\
-petra = software based tools released in March\\
+test env allows to enter one command to run the eval\\
+petra = software based tool released in March\\
 on a set of test applications\\
 thanks to new features, generate results with orka, then compare\\~\\
 high error rate but too late to investigate
@@ -403,8 +408,8 @@ high error rate but too late to investigate
 \begin{frame}{Source-line level accounting (1/2)}
 \begin{block}{Problem}
 \begin{itemize}
-\item Method-level estimates highlight costly methods, not energy bugs
-\item Developers need even more fine-grained guidance
+\item Method-level estimates highlight costly methods, not the energy bugs.
+\item Developers need even more fine-grained guidance.
 \end{itemize}
 \end{block}
 \begin{block}{Implementation}
@@ -443,7 +448,7 @@ let the user know what's the \alert{relative cost} of those lines
 \section{Conclusion}
 \begin{frame}{Future work}
 \begin{itemize}
-\item Tail-energy: last-trigger policy and extend to other components
+\item Tail-energy: implement last-trigger policy and extend to other components
 \item Improve the injector
 \item Improve accuracy
 \end{itemize}
@@ -456,13 +461,13 @@ injector: \alert{single point of failure}, need to \alert{broaden its reach}\\
 \begin{frame}{Summary}
 This work stands as the first software-based tool:
 \begin{enumerate}
-\item accounting for \alert{tail-energy},
-\item providing \alert{source-line level} energy estimates,
-\item available as an \alert{open-source} application.
+\item Accounting for \alert{tail-energy}
+\item Providing \alert{source-line level} energy estimates
+\item Available as an \alert{open-source} application
 \end{enumerate}
 \vskip0pt plus.5fill
 {\small \orka{} is available at \url{https://github.com/acornet/orka}}
-\note{\alert{what I'd like to leave to with}}
+\note{\alert{what I'd like to leave you with}}
 \end{frame}
 %
 %
@@ -470,7 +475,7 @@ This work stands as the first software-based tool:
   \vfill
   \centering
   \begin{beamercolorbox}[sep=8pt,center,shadow=true,rounded=true]{title}
-    \usebeamerfont{title}Thank you\par%
+    \usebeamerfont{title}Thank you.\par%
   \end{beamercolorbox}
   \vfill
 \end{frame}
@@ -528,8 +533,8 @@ This work stands as the first software-based tool:
 %
 \begin{frame}[fragile]{Monitoring the call-stack}
 \note{
-Log when routines start and terminate\\
-initial version only log when method enter\\
+Logs when routines start and terminate\\
+initial version only logs when method enter\\
 changed the output format of orka\\
 }
 \begin{columns}
@@ -575,6 +580,11 @@ $t_0 \leftarrow t_1$, $S_0 \leftarrow S_1$\;
 }
 \end{algorithm}
 \end{small}
+\note{
+if any traffic: active\\
+no traffic from active: tail\\
+if in tail mode: check for time condition
+}
 \end{frame}
 %
 %
