@@ -94,7 +94,10 @@ A software-based energy-profiler:
 \item available as an \alert{open-sourced} application.
 \end{enumerate}
 \note{
-After the reviewing the state-of-art literature, my opinion was there is a need for...\\
+After the reviewing the state-of-art literature, my opinion was there is \alert{a need for}...\\
+explain later \alert{why important}\\
+were the \alert{aims} of my project\\
+After reviewing the related work...\alert{extending an existing solution}, namely Orka = option to fulfill them.\\
 }
 \note[item]{
 tail-energy is responsible for a \alert{significant fraction} of the drain}
@@ -104,10 +107,6 @@ but \alert{still the responsibility of the developers} to find the energy}
 despite the many research contributions focussing on ...\\
 developers still don't have access to...\\
 that's why we \alert{need a common effort} in the community.}
-\note[item]{were the aims of my project\\
-After reviewing the related work...\\
-\alert{extending an existing solution}, namely Orka = option to fulfill them.
-}
 \end{frame}
 %
 %%%%%%%%%%%%%%% ORKA
@@ -146,26 +145,39 @@ how does this work?}
     \usebeamerfont{title}Demo\par%
   \end{beamercolorbox}
   \vfill
-\note{unlock phone}
+\note{
+COMMENT PRINTS\\
+ACTIVATE VYGOR\\s
+unlock phone}
 \end{frame}
 %%%%%%%%%%%%%%% HARDWARE
 %
 \section{Hardware-usage and tail-energy accounting}
-\note{First, define tail energy}
+\note{
+Focus on probably the most significant contribution of this work\\
+First, let's define tail energy
+}
 \begin{frame}{Tail-energy}
 \note{
-definition, how possible?\\
+read definition, how?\\~\\
 power behaviour can be modelled using a \alert{power state machine}\\
 always \alert{two states at least}\\
 with or without workflow\\~\\
+PAUSE\\~\\
 for many mobile component, a \alert{third state}, the tail-state\\
-continue to drain the battery after the workflow has been processed
+entered after a workflow has been processed\\
+stay in that state for a definite time, \alert{tail-time}\\
+spend \alert{tail-energy}
 }
 \begin{columns}
 \begin{column}{0.5\textwidth}
+\begin{definition}
 \begin{itemize}
-\item Tail-energy: the component stays in a high power-state \alert{after} processing a workfow.
+\item A component exhibits \alert{tail-behaviour} if it stays in a high power-state \alert{after} processing a workflow.
+\item Tail-time
+\item Tail-energy
 \end{itemize}
+\end{definition}
 \end{column}
 \pause
 \begin{column}{0.5\textwidth}
@@ -201,7 +213,10 @@ The breakdown by component:
 \end{figure}
 \end{column}
 \end{columns}
-\note{doesn't know what part of the code is responsible for the drain}
+\note{difficult to interpret: don't know what parts of the code are responsible for the drain\\
+tail-energy is responsible for a \alert{significant fraction} of the drain\\~\\
+Map: this method is method is responsible for this drain
+}
 \end{frame}
 %
 %
@@ -225,7 +240,7 @@ MainActivity$SendGet.run {ACTIVE: 1.57, IDLE: 0.84,
 \note{
 I/O consumes the most energy -- only Wi-FI\\
 Simple relation between time and energy -- focus on time\\~\\
-Tuples represent the \alert{time spent in each mode } by the Wi-Fi antenna, which is attributed to the method\\
+For one method, Tuples represent the \alert{time spent in each mode } by the Wi-Fi antenna, which is attributed to the method\\
 Because of the method XX, the antenna spent ...
 }
 \end{frame}
@@ -266,7 +281,10 @@ idx iface uid_tag_int cnt_set rx_bytes rx_packets tx_bytes tx_packets
 3 wlan0 0 1 0 0 0 0
 \end{lstlisting}
 \note{
-OS log the number of bytes send and received by each application
+OS log the number of bytes send and received by each application\\
+able to fetch this file every 50ms\\
+hence able to monitor traffic with a 50ms \alert{sampling period}\\
+thanks to this, I can \alert{deduce when Wi-Fi switches}  from one state to another
 }
 \end{frame}
 % FIXME
@@ -278,8 +296,9 @@ OS log the number of bytes send and received by each application
 	\includegraphics[height=0.6\textheight]{figures/wifi_statemachine.png} 
 	\caption{Power-state machine of a Wi-Fi antenna}
 \end{figure}
-\note{Aim: Deduce Wi-Fi switches from network monitoring\\
+\note{
 leave more detailed speudo QA\\~\\
+High level idea:\\
 if any traffic: active\\
 no traffic from active: tail\\
 if in tail mode: check for time condition
@@ -294,7 +313,9 @@ if in tail mode: check for time condition
     \usebeamerfont{title}Demo\par%
   \end{beamercolorbox}
   \vfill
-\note{git checkout}
+\note{
+ACTIVATE VYGOR\\
+git checkout}
 \end{frame}
 %
 %
@@ -329,7 +350,8 @@ if in tail mode: check for time condition
 \end{itemize}
 \note{
 merge sort\\
-leave algo for QA\\~\\
+leave algo for QA
+\vspace{2cm}
 let's log processed until t0, state up to date\\
 let's fetch next entry at t0 + delta t\\
 state is constant during delta t\\
@@ -354,9 +376,28 @@ MainActivity$SendGet.run {ACTIVE: 1.57, IDLE: 0.84,
 \section{Other work}
 \note{
 other important contributions\\
-Important effort were made to \alert{refactor and improve usability}\\
+Important effort were made to \alert{refactor}\\
+in order to \alert{ease the implementation} of extensions\\
+\alert{improve usability}\\
 leave to QA
 }
+%
+%
+\begin{frame}{Evaluation of \orka{}}
+\begin{itemize}
+\item Aim: perform evaluation during the development cycle
+\item To this end, built a \alert{test environment} for \orka{}
+\item Generated reference results using \petra{}
+\item High error rate on average
+\end{itemize}
+\note{
+test env allow to enter one command to run the eval\\
+petra = software based tools released in March\\
+on a set of test applications\\
+thanks to new features, generate results with orka, then compare\\~\\
+high error rate but too late to investigate
+}
+\end{frame}
 %
 %
 \begin{frame}{Source-line level accounting (1/2)}
@@ -369,8 +410,10 @@ leave to QA
 \begin{block}{Implementation}
 \begin{itemize}
 \item Extended the injector and the traces analyser
+%\item \orka{} generates a reconstructed source-code with line-level estimates
 \end{itemize}
 \end{block}
+\note{generates a reconstructed source-code with line-level estimates}
 \end{frame}
 %
 %
@@ -389,16 +432,27 @@ method RecList.onCreate, Average cost: 0.0197754308, Calls: 1.0
   21.80% l258 calling android.os.Bundle.getString
   21.80% l260 calling android.os.Bundle.getString
 \end{lstlisting}}
-\end{frame}
-%
-%
-\begin{frame}{Evaluation of \orka{}}
-TODO
+\note{
+reconstructed code includes the lines for which we have an energy estimate\\
+let the user know what's the \alert{relative cost} of those lines
+}
 \end{frame}
 %
 %%%%%%%%%%%%%%% CONCLUSION
 %
 \section{Conclusion}
+\begin{frame}{Future work}
+\begin{itemize}
+\item Tail-energy: last-trigger policy and extend to other components
+\item Improve the injector
+\item Improve accuracy
+\end{itemize}
+\note{
+injector: \alert{single point of failure}, need to \alert{broaden its reach}\\
+}
+\end{frame}
+%
+%
 \begin{frame}{Summary}
 This work stands as the first software-based tool:
 \begin{enumerate}
@@ -408,15 +462,7 @@ This work stands as the first software-based tool:
 \end{enumerate}
 \vskip0pt plus.5fill
 {\small \orka{} is available at \url{https://github.com/acornet/orka}}
-\end{frame}
-%
-%
-\begin{frame}{Future work}
-\begin{itemize}
-\item Tail-energy: last-trigger policy and extend to other componentss
-\item Improve the injector
-\item Improve accuracy
-\end{itemize}
+\note{\alert{what I'd like to leave to with}}
 \end{frame}
 %
 %
