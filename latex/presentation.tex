@@ -123,9 +123,10 @@ tail-energy is responsible for a \alert{significant fraction} of the drain}
 \begin{frame}{\orka{}: overview}
 \begin{itemize}
 %\item Input: Tested \apk{} file and \monkeyrunner{} test script
-%\item Output: Energy estimates at the method-level
-\item Main assumption:
-$$ cost(routine) = \sum_{API \in routine} cost(API)$$
+%\item Output: Energy estimates at the method-level`
+\item Calls to the Android API are the most energy greedy
+\item Main assumption: 
+$$ cost(routine) = \sum_{line \in routine} cost(line) = \sum_{line \in routine} \sum_{API \in routine} cost(API)$$
 \item Rely on \alert{instrumentation} and on the Android \alert{emulator}
 \end{itemize}
 \note{
@@ -144,19 +145,54 @@ Rely on \alert{instrumentation}
 how does this work?}
 \end{frame}
 %
+%%%%%%%%%%%%%%% SOURCE-LINE
 %
-\begin{frame}
-  \vfill
-  \centering
-  \begin{beamercolorbox}[sep=8pt,center,shadow=true,rounded=true]{title}
-    \usebeamerfont{title}Demo\par%
-  \end{beamercolorbox}
-  \vfill
+\section{Source-line level energy estimates}
 \note{
-COMMENT PRINTS\\
-ACTIVATE VYGOR\\
-unlock phone}
+Goal: generates a reconstructed source-code with line-level estimates
+}
+%
+%
+\begin{frame}{What's needed to solve this?}
+ 
+\end{frame}  
+%
+%
+ \begin{frame}{Code injection}
+ 
+\end{frame}  
+%
+%
+\begin{frame}{Logcat}
+ 
+\end{frame}  
+%
+%
+\begin{frame}{Analyser} % Replay of Logcat and call stacks
+ 
+\end{frame}  
+ 
+\begin{frame}[fragile]{Final output}
+\centering
+%[caption=Example of reconstructed source code providing fine-grained guidance]
+{\tiny%\footnotesize
+\begin{lstlisting}
+method RecList.onCreate, Average cost: 0.0197754308, Calls: 1.0
+   2.64% l-1
+   1.45% l192 calling RecList.InitRepeatButton
+   0.88% l227 calling RecList.InitThemedButtons
+   0.57% l229 calling Pref.getPlayingFilePath
+  29.04% l247 calling RecList.updateSongList
+  21.80% l257 calling android.os.Bundle.getString
+  21.80% l258 calling android.os.Bundle.getString
+  21.80% l260 calling android.os.Bundle.getString
+\end{lstlisting}}
+\note{
+reconstructed code includes the lines for which we have an energy estimate\\
+let the user know what's the \alert{relative cost} of those lines
+}
 \end{frame}
+%
 %%%%%%%%%%%%%%% HARDWARE
 %
 \section{Hardware-usage and tail-energy accounting}
@@ -181,12 +217,10 @@ spend \alert{tail-energy}
 \begin{definition}
 \begin{itemize}
 \item A component exhibits \alert{tail-behaviour} if it stays in a high power-state \alert{after} processing a workflow.
-\item Tail-time
-\item Tail-energy
 \end{itemize}
 \end{definition}
 \end{column}
-\pause
+
 \begin{column}{0.5\textwidth}
 \begin{figure}
 	\centering
@@ -198,53 +232,35 @@ spend \alert{tail-energy}
 \end{frame}
 %
 %
-\begin{frame}{Problem}
-\begin{columns}
-\begin{column}{0.5\textwidth}
-The breakdown by component:
-\begin{itemize}
-\item is \alert{difficult to interpret},
-\item doesn't account for \alert{tail-energy}.
-\end{itemize}
+\begin{frame}[fragile]{Problem}
 \begin{block}{Aims}
 \begin{itemize}
 \item Map hardware-usage back to the code
 \item Account for tail-energy
 \end{itemize}
 \end{block}
-\end{column}
-\begin{column}{0.5\textwidth}
-\begin{figure}
-% FIXME better breakdown
-	\includegraphics[width=\textwidth]{figures/hw_breakdown.png} 
-\end{figure}
-\end{column}
-\end{columns}
-\note{difficult to interpret: don't know what parts of the code are responsible for the drain\\
-tail-energy is responsible for a \alert{significant fraction} of the drain\\~\\
-Map: THIS method is responsible for THIS drain
-}
-\end{frame}
 %
-%
-\begin{frame}[fragile]{Simplifications}
-\begin{itemize}
-\item Only for Wi-Fi
-\item At the method level
-\item Focus on time ($E= P \Delta_t$)
-\end{itemize}
 \begin{block}{Specification}
 \begin{itemize}
 \item Produce energy tuples
 \end{itemize}
-\end{block}
-\begin{lstlisting}
-MainActivity.<init> {ACTIVE: 0.0, IDLE: 0.01,
-  TAIL: 0.0}
+%MainActivity.<init> {ACTIVE: 0.0, IDLE: 0.01, TAIL: 0.0}
+\begin{lstlisting}`
 MainActivity$SendGet.run {ACTIVE: 1.57, IDLE: 0.84,
   TAIL: 1.62}
 \end{lstlisting}
+\end{block}
+%
+\begin{block}{Simplifications}
+\begin{itemize}
+\item Only for Wi-Fi, at the method level
+\item Focus on time ($E= P \Delta_t$)
+\end{itemize}
+\end{block}
 \note{
+difficult to interpret: don't know what parts of the code are responsible for the drain\\
+tail-energy is responsible for a \alert{significant fraction} of the drain\\~\\
+Map: THIS method is responsible for THIS drain
 I/O consumes the most energy -- only Wi-FI\\
 Simple relation between time and energy -- focus on time\\~\\
 For one method, tuples represent the \alert{time spent in each mode } by the Wi-Fi antenna, which is attributed to the method\\
@@ -313,19 +329,6 @@ if in tail mode: check for time condition
 \end{frame}
 %
 % 
-\begin{frame}
-  \vfill
-  \centering
-  \begin{beamercolorbox}[sep=8pt,center,shadow=true,rounded=true]{title}
-    \usebeamerfont{title}Demo\par%
-  \end{beamercolorbox}
-  \vfill
-\note{
-ACTIVATE VYGOR\\
-git checkout}
-\end{frame}
-%
-%
 \begin{frame}[fragile]{Network analyser: principle}
 \begin{columns}
 \begin{column}{0.5\textwidth}
@@ -378,72 +381,9 @@ MainActivity$SendGet.run {ACTIVE: 1.57, IDLE: 0.84,
 \end{lstlisting}
 \end{frame}
 %
-%%%%%%%%%%%%%%% OTHER WORK
-%
-\section{Other work}
-\note{
-other important contributions\\
-Important efforts were made to \alert{refactor}\\
-in order to \alert{ease the implementation} of extensions\\
-\alert{improve usability}\\
-leave to QA
-}
-%
-%
-\begin{frame}{Evaluation of \orka{}}
-\begin{itemize}
-\item Aim: perform evaluation during the development cycle
-\item Generated reference results using \petra{}
-\item To this end, built a \alert{test environment} for \orka{}
-\item High error rate on average
-\end{itemize}
-\note{
-\alert{made possible by petra} = software based tool released in March\\
-test env allows to enter one command to run the eval\\
-= generate results with orka on a set of test applications\\
-then compare\\~\\
-high error rate but too late to investigate
-}
+\begin{frame}[fragile]{Evaluation}
 \end{frame}
 %
-%
-\begin{frame}{Source-line level accounting (1/2)}
-\begin{block}{Problem}
-\begin{itemize}
-\item Method-level estimates highlight costly methods, not the energy bugs.
-\item Developers need even more fine-grained guidance.
-\end{itemize}
-\end{block}
-\begin{block}{Implementation}
-\begin{itemize}
-\item Extended the injector and the traces analyser
-%\item \orka{} generates a reconstructed source-code with line-level estimates
-\end{itemize}
-\end{block}
-\note{generates a reconstructed source-code with line-level estimates}
-\end{frame}
-%
-%
-\begin{frame}[fragile]{Source-line level accounting (2/2)}
-\centering
-%[caption=Example of reconstructed source code providing fine-grained guidance]
-{\tiny%\footnotesize
-\begin{lstlisting}
-method RecList.onCreate, Average cost: 0.0197754308, Calls: 1.0
-   2.64% l-1
-   1.45% l192 calling RecList.InitRepeatButton
-   0.88% l227 calling RecList.InitThemedButtons
-   0.57% l229 calling Pref.getPlayingFilePath
-  29.04% l247 calling RecList.updateSongList
-  21.80% l257 calling android.os.Bundle.getString
-  21.80% l258 calling android.os.Bundle.getString
-  21.80% l260 calling android.os.Bundle.getString
-\end{lstlisting}}
-\note{
-reconstructed code includes the lines for which we have an energy estimate\\
-let the user know what's the \alert{relative cost} of those lines
-}
-\end{frame}
 %
 %%%%%%%%%%%%%%% CONCLUSION
 %
@@ -482,32 +422,37 @@ This work stands as the first software-based tool:
   \vfill
 \end{frame}
 %
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%% OTHER WORK
 %
-\begin{frame}{Refactoring}
+\section{Other work}
+\note{
+other important contributions\\
+Important efforts were made to \alert{refactor}\\
+in order to \alert{ease the implementation} of extensions\\
+\alert{improve usability}\\
+leave to QA
+}
+%
+%
+\begin{frame}{Evaluation of \orka{}}
+\begin{itemize}
+\item Aim: perform evaluation during the development cycle
+\item Generated reference results using \petra{}
+\item To this end, built a \alert{test environment} for \orka{}
+\item High error rate on average
+\end{itemize}
+\note{
+\alert{made possible by petra} = software based tool released in March\\
+test env allows to enter one command to run the eval\\
+= generate results with orka on a set of test applications\\
+then compare\\~\\
+high error rate but too late to investigate
+}
+\end{frame}
+%
+\begin{frame}{Architecture}
 \begin{figure}
 \centering
-    \begin{subfigure}[b]{0.5\textwidth}
-        \centering
-\begin{tikzpicture}[%
-  grow via three points={one child at (0.5,-0.7) and
-  two children at (0.5,-0.7) and (0.5,-1.4)},
-  edge from parent path={(\tikzparentnode.south) |- (\tikzchildnode.west)}]
-  \node {main.py}
-    child { node {config.py}}
-    child { node {decomp.sh}}
-    child { node {inject.py}}
-    child { node {recomp.sh}}
-    child { node {sign.sh}}
-    child { node {simulationMaster.sh}}
-    child { node {routine.py}}
-    child { node {hardwareReader.py}};
-\end{tikzpicture}
-        \caption{Initial design}
-        \label{fig:design:init}
-    \end{subfigure}%
-    \begin{subfigure}[b]{0.5\textwidth}
-        \centering
 \begin{tikzpicture}[%
   grow via three points={one child at (0.5,-0.7) and
   two children at (0.5,-0.7) and (0.5,-1.4)},
@@ -524,9 +469,6 @@ This work stands as the first software-based tool:
     child [missing] {}
     child { node {hardwareAnalyser.py}};
 \end{tikzpicture}
-        \caption{New design}
-        \label{fig:design:new}
-    \end{subfigure}%
 \caption{\orka{}'s design}
 \label{fig:design}
 \end{figure}
