@@ -4,10 +4,10 @@
 %\setbeameroption{show notes}
 \title[Project presentation]{\textsc{Hardware-usage accounting and source-line level energy estimates on Android}}
 \author{Alexandre \textsc{Cornet}\\ {\footnotesize supervised by Dr. Anandha \textsc{Gopalan}}}
-\institute{Imperial College London}
-\date{September 2017}
-\pgfdeclareimage[height=0.5cm]{university-logo}{figures/imperial.pdf}
-\logo{\pgfuseimage{university-logo}}
+\institute{Eighth International Conference on Smart Grids, Green Communications and IT Energy-aware Technologies}
+\date{May 2018}
+%\pgfdeclareimage[height=0.5cm]{university-logo}{figures/imperial.pdf}
+%\logo{\pgfuseimage{university-logo}}
 \begin{document}
 \tikzstyle{every node}=[draw=black,thick,anchor=west]
 \tikzstyle{selected}=[draw=red,fill=red!30]
@@ -15,12 +15,10 @@
 \begin{frame}
 \titlepage
 \note{
-NO PRINTS\\
-VYGOR\\
-one page - def continu\\~\\
-
-extended an energy profiler for Android Applications\\
-specifically, focussed on hardware usage and source line level estimates}
+TIMER\\
+one page - def continu
+%\\~\\
+}
 \end{frame}
 %
 \iffalse
@@ -34,11 +32,11 @@ specifically, focussed on hardware usage and source line level estimates}
 %%%%%%%%%%%%%%% PROBLEM
 %
 \section{Problem}
+% FIXME text box on top of frame
 \note{What problem did I try to solve?\\
 App dev doing well\\
 But keep getting this}
-% FIXME text box on top of frame
-\begin{frame}{Energy efficiency matters}
+\begin{frame}{Motivations}
 \begin{columns}
 \begin{column}{0.5\textwidth}
 \begin{figure}
@@ -59,59 +57,63 @@ What are your options?
 }
 \end{frame}
 %
-%%%%%%%%%%%%%%% RELATED WORK
-%
-\section{Related work}
-\note{
-What's the related work of this project?\\
-Best option is definitely to use an energy profiler
-}
-\begin{frame}{Energy-profilers}
+\begin{frame}{Related work: Energy-profilers (1/2)}
 \begin{itemize}
-\item Highlight the energy-greediest parts of the code
-\item Three types:
-\begin{enumerate}
-\item hardware-based
-\item model-based
-\item software-based
-\end{enumerate}
-\item Yet, \alert{no solution accessible} to the majority of developers
+\item \alert{Hardware based} profilers rely on power measurement platforms.
+\item \alert{Model based} profilers embed these power measurements in off-line models.
+\item \textit{vLens} (hardware-based) and \textit{eprof} (model-based):
+\begin{itemize}
+\item Rely on instrumentation
+\item Generate \alert{source-line level estimates}
+\item Account for \alert{tail-energy}: \textit{eprof} generates \texttt{(utilisation\_draw, 
+tail\_mode\_draw)} tuples
+\end{itemize}
 \end{itemize}
 \note{
-tools which \alert{provide estimates} of the consumption of the code\\
-are able to highlight...\\~\\
-3 types...\\
-hardware and model-based rely on \alert{expensive power measurement platforms}\\
-financial and practical overhead\\
-software-based tools introduced to move away from this requirements\\
-however, as this project started, \alert{no publicly available tool}\\~\\
-hence \alert{not accessible} to majority
+Best option is definitely to use an energy profiler, able to highlight...
+Hardware / model based\\
+Interesting contributions: vLens, eprof\\
+Eprof: models component energy behaviour using FSM\\
+By design, lead to a financial and practical overhead\\
+software-based tools introduced to move away from this requirements
+}
+\end{frame}
+%
+\begin{frame}{Related work: Energy-profilers (2/2)}
+\begin{itemize}
+\item \alert{Software-based} profilers: portable and widely accessible
+\item \textit{PETrA}:
+\begin{itemize}
+\item Lightweight: only needs the application and a test script
+\item \alert{Relies on \textit{Android}} tools to collect the execution trace and energy related logs
+\item Doesn't account for tail-energy
+\item \alert{Method-level} feedback
+\end{itemize}
+\end{itemize}
+\note{
+Also uses a FSM modeling of energy behaviour\\
+No tail energy + not available as this work started\\
+Method level feedback: developers still need to investigate\\
+no widely accessible solution\\
 So, what's missing to solve our problem?
 }
 \end{frame}
 %
 %
 \begin{frame}{What's missing?}
-A software-based energy-profiler:
+An energy-profiler:
 \begin{enumerate}
-\item Providing hardware-usage and \alert{tail-energy} accounting
+\item \alert{Software-based}
 \item Providing \alert{source-line level} estimates
-\item Available as an \alert{open-sourced} application
+\item Providing hardware-usage and \alert{tail-energy} accounting
 \end{enumerate}
 \note{
 After the reviewing the state-of-art literature, my opinion was there is \alert{a need for}...\\
-explain later \alert{why important}\\
-were the \alert{aims} of my project\\
-After reviewing the related work...\alert{extending an existing solution}, namely Orka = best option to fulfill them.\\
 }
-\note[item]{
-tail-energy is responsible for a \alert{significant fraction} of the drain}
 \note[item]{existing profilers highlight the most costly methods\\
 but \alert{still the responsibility of the developers} to find the energy}
 \note[item]{
-despite the many research contributions focussing on ...\\
-developers still don't have access to...\\
-that's why we \alert{need a common effort} in the community.}
+tail-energy is responsible for a \alert{significant fraction} of the drain}
 \end{frame}
 %
 %%%%%%%%%%%%%%% ORKA
@@ -391,15 +393,15 @@ leave to QA
 \begin{frame}{Evaluation of \orka{}}
 \begin{itemize}
 \item Aim: perform evaluation during the development cycle
-\item To this end, built a \alert{test environment} for \orka{}
 \item Generated reference results using \petra{}
+\item To this end, built a \alert{test environment} for \orka{}
 \item High error rate on average
 \end{itemize}
 \note{
+\alert{made possible by petra} = software based tool released in March\\
 test env allows to enter one command to run the eval\\
-petra = software based tool released in March\\
-on a set of test applications\\
-thanks to new features, generate results with orka, then compare\\~\\
+= generate results with orka on a set of test applications\\
+then compare\\~\\
 high error rate but too late to investigate
 }
 \end{frame}
