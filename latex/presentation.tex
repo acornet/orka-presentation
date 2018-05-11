@@ -126,7 +126,7 @@ tail-energy is responsible for a \alert{significant fraction} of the drain}
 %\item Output: Energy estimates at the method-level`
 \item Calls to the Android API are the most energy greedy
 \item Main assumption: 
-$$ cost(routine) = \sum_{line \in routine} cost(line) = \sum_{line \in routine} \sum_{API \in routine} cost(API)$$
+$$ cost(routine) = \sum_{line \in routine} cost(line) = \sum_{line \in routine} \sum_{API \in line} cost(API)$$
 \item Rely on \alert{instrumentation} and on the Android \alert{emulator}
 \end{itemize}
 \note{
@@ -154,18 +154,94 @@ Goal: generates a reconstructed source-code with line-level estimates
 %
 %
 \begin{frame}{What's needed to solve this?}
- 
+\begin{itemize}
+\item We want to compute :
+$$cost(line) = \sum_{API \in line} cost(API)$$
+\item $cost(API)$ is given by \lv{} work.
+\item Hence, need to compute $\{API \in line\}$
+\item Possible to derive this from the execution trace.
+\end{itemize}
 \end{frame}  
 %
 %
- \begin{frame}{Code injection}
- 
+\begin{frame}[fragile]{Execution trace}
+\begin{columns}
+\begin{column}{0.5\textwidth}
+\begin{figure}%[language=java]
+\centering
+\begin{lstlisting}[numbers=left]
+public void a() {
+	API1();
+	call b();
+	return;
+}
+public void b() {
+	API2();
+	return;
+}
+\end{lstlisting}
+\caption{\texttt{java} code of two example functions}
+\label{fig:exfunctions}
+\end{figure}
+\end{column}
+%
+\begin{column}{0.5\textwidth}
+\begin{figure}
+\centering
+\begin{lstlisting}
+entering a
+API call l2 API1
+invoking subroutine l3 b
+entering b
+API call l7 API2
+exiting b
+exiting a
+\end{lstlisting}
+\caption{\logcat{} output produced by the execution of routine \texttt{a} for fined-grained feedback}
+\label{fig:exlogcat3}
+\end{figure}
+\end{column}
+\end{columns}
 \end{frame}  
 %
 %
-\begin{frame}{Logcat}
- 
-\end{frame}  
+\begin{frame}[fragile]{Code injection}
+\begin{columns}
+\begin{column}{0.5\textwidth}
+\begin{figure}%[language=java]
+\centering
+\begin{lstlisting}[numbers=left]
+public void a() {
+	Log("entering a")
+	Log("API call l2 API1")
+	API1();
+	Log("invoking subroutine l3 b")
+	call b();
+	Log("exiting a")
+	return;
+}
+\end{lstlisting}
+\caption{\texttt{java} code of two example functions}
+\end{figure}
+\end{column}
+%
+\begin{column}{0.5\textwidth}
+\begin{figure}
+\centering
+\begin{lstlisting}
+public void b() {
+	Log("entering b")
+	Log("API call l7 API2")
+	API2();
+	Log("exiting b")
+	return;
+}
+\end{lstlisting}
+\caption{Injected functions}
+\end{figure}
+\end{column}
+\end{columns}
+\end{frame} 
 %
 %
 \begin{frame}{Analyser} % Replay of Logcat and call stacks
