@@ -82,7 +82,7 @@ spend \alert{tail-energy}
 \begin{figure}
 	\centering
 	\includegraphics[width=\textwidth]{figures/wifi_statemachine.png} 
-	\caption{Power-state machine of a Wi-Fi antenna}
+	\caption{Power-state machine of a Wi-Fi antenna  \cite{Ding:2013:CMI:2465529.2466586}}
 \end{figure}
 \end{column}
 \end{columns}
@@ -93,7 +93,7 @@ spend \alert{tail-energy}
 \begin{itemize}
 \item \alert{Hardware based} profilers rely on power measurement platforms.
 \item \alert{Model based} profilers embed these power measurements in off-line models.
-\item \textit{vLens} (hardware-based) and \textit{eprof} (model-based):
+\item \textit{vLens} \cite{li2013calculating} (hardware-based) and \textit{eprof} \cite{pathak2012energy} (model-based):
 \begin{itemize}
 \item Rely on instrumentation
 \item Generate \alert{source-line level estimates}
@@ -114,7 +114,7 @@ software-based tools introduced to move away from this requirements
 \begin{frame}{Related work: Energy-profilers (2/2)}
 \begin{itemize}
 \item \alert{Software-based} profilers: portable and widely accessible
-\item \textit{PETrA}:
+\item \textit{PETrA} \cite{petra}:
 \begin{itemize}
 \item Lightweight: only needs the application and a test script
 \item \alert{Relies on \textit{Android}} tools to collect the execution trace and energy related logs
@@ -156,7 +156,7 @@ tail-energy is responsible for a \alert{significant fraction} of the drain}
 \begin{itemize}
 %\item Input: Tested \apk{} file and \monkeyrunner{} test script
 %\item Output: Energy estimates at the method-level`
-\item \lv{} computed the energy costs of 800 API calls
+\item \lv{} \cite{linares2014mining} computed the energy costs of 800 API calls
 \begin{itemize}
 \item Calls to the Android API are the most energy greedy
 \end{itemize}
@@ -195,7 +195,7 @@ Goal: generates a reconstructed source-code with line-level estimates
 \begin{itemize}
 \item We want to compute :
 $$cost(line) = \sum_{API \in line} cost(API)$$
-\item $cost(API)$ is given by \lv{} work.
+\item $cost(API)$ is given by \lv{} \cite{linares2014mining} work.
 \item Hence, we need to compute $\{API \in line\}$
 \item Possible to derive this from the execution trace.
 \end{itemize}
@@ -544,6 +544,13 @@ injector: \alert{single point of failure}, need to \alert{broaden its reach}\\
 \end{frame}
 %
 %
+\begin{frame}[allowframebreaks]
+        \frametitle{References}
+        \bibliographystyle{plain}
+        {\footnotesize \bibliography{references.bib} }
+\end{frame}
+%
+%
 \begin{frame}
   \vfill
   \centering
@@ -568,7 +575,7 @@ leave to QA
 \begin{frame}{Evaluation of \orka{}}
 \begin{itemize}
 \item Aim: perform evaluation during the development cycle
-\item Generated reference results using \petra{}
+\item Generated reference results using \petra{} \cite{petra}
 \item To this end, built a \alert{test environment} for \orka{}
 \item High error rate on average
 \end{itemize}

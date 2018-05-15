@@ -7,18 +7,9 @@ TODOs:
 + Moved tail energy before related work
 + Added a lign to describe LV work
 + Source-line - analyser: principles + stack diagrams
-- HW eval:
-    - using custom app sending GET every T ms
-    - Aim: verify high level exp
-    - Highlight accounting policy
-
++ HW eval
 - Figures alignment S12/13
-- References:
-    - Image S17
-    - LV
-    - Petra
-    - vLens
-    - eProf
++ References
 
 Next steps:
 - send the slides early next week
