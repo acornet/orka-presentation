@@ -511,6 +511,21 @@ MainActivity$SendGet.run {ACTIVE: 1.57, IDLE: 0.84,
 \end{frame}
 %
 \begin{frame}[fragile]{Evaluation}
+\begin{itemize}
+\item Aim: verify high-level expectations
+\begin{itemize}
+\item Good energy efficiency for dense network traffic
+\item Efficiency decreases when period gets close to tail-time
+\end{itemize}
+\item Tested against a custom app, sending network requests at a chosen frequency
+\item Orka able to detect the method sending the request
+\item Need to improve accounting policy: \alert{last-trigger policy}
+\end{itemize}
+\note{
+ Aim: verify high level exp\\
+ using custom app sending GET every T ms\\
+ Highlighted \alert{too simple accounting policy}
+}
 \end{frame}
 %
 %
@@ -540,7 +555,7 @@ injector: \alert{single point of failure}, need to \alert{broaden its reach}\\
 %
 %%%%%%%%%%%%%%% OTHER WORK
 %
-\section{Appendice}
+\section{Appendix}
 \note{
 other important contributions\\
 Important efforts were made to \alert{refactor}\\
