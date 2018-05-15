@@ -31,7 +31,7 @@ one page - def continu
 %
 %%%%%%%%%%%%%%% PROBLEM
 %
-\section{Problem}
+\section*{Problem}
 % FIXME text box on top of frame
 \note{What problem did I try to solve?\\
 App dev doing well\\
@@ -56,6 +56,38 @@ decide to optimise your code for it\\%and to  \alert{find energy bugs}
 What are your options?
 }
 \end{frame}
+%
+\begin{frame}{An asynchronous power-behaviour: Tail-energy}
+\note{
+definition: how possible?\\~\\
+power behaviour can be modelled using a \alert{power state machine}\\
+always \alert{two states at least}\\
+with or without workflow\\~\\
+PAUSE\\~\\
+for many mobile components, a \alert{third state}, the tail-state\\
+entered after a workflow has been processed\\
+stay in that state for a definite time, \alert{tail-time}\\
+spend \alert{tail-energy}
+}
+\begin{columns}
+\begin{column}{0.5\textwidth}
+\begin{definition}
+\begin{itemize}
+\item A component exhibits \alert{tail-behaviour} if it stays in a high power-state \alert{after} processing a workflow.
+\end{itemize}
+\end{definition}
+\end{column}
+
+\begin{column}{0.5\textwidth}
+\begin{figure}
+	\centering
+	\includegraphics[width=\textwidth]{figures/wifi_statemachine.png} 
+	\caption{Power-state machine of a Wi-Fi antenna}
+\end{figure}
+\end{column}
+\end{columns}
+\end{frame}
+%
 %
 \begin{frame}{Related work: Energy-profilers (1/2)}
 \begin{itemize}
@@ -124,9 +156,15 @@ tail-energy is responsible for a \alert{significant fraction} of the drain}
 \begin{itemize}
 %\item Input: Tested \apk{} file and \monkeyrunner{} test script
 %\item Output: Energy estimates at the method-level`
+\item \lv{} computed the energy costs of 800 API calls
+\begin{itemize}
 \item Calls to the Android API are the most energy greedy
-\item Main assumption: 
-$$ cost(routine) = \sum_{line \in routine} cost(line) = \sum_{line \in routine} \sum_{API \in line} cost(API)$$
+\end{itemize}
+\item Main assumption:
+\begin{align*}
+cost(routine) &= \sum_{line \in routine} cost(line) \\
+&=  \sum_{line \in routine} \left( \sum_{API \in line} cost(API) \right)
+\end{align*}
 \item Rely on \alert{instrumentation} and on the Android \alert{emulator}
 \end{itemize}
 \note{
@@ -158,7 +196,7 @@ Goal: generates a reconstructed source-code with line-level estimates
 \item We want to compute :
 $$cost(line) = \sum_{API \in line} cost(API)$$
 \item $cost(API)$ is given by \lv{} work.
-\item Hence, need to compute $\{API \in line\}$
+\item Hence, we need to compute $\{API \in line\}$
 \item Possible to derive this from the execution trace.
 \end{itemize}
 \end{frame}  
@@ -202,6 +240,12 @@ exiting a
 \end{figure}
 \end{column}
 \end{columns}
+\note{
+Need to know:\\
+method enter and exit\\
+API invocation with line\\
+line of subroutines invocation 
+}
 \end{frame}  
 %
 %
@@ -210,7 +254,7 @@ exiting a
 \begin{column}{0.5\textwidth}
 \begin{figure}%[language=java]
 \centering
-\begin{lstlisting}[numbers=left]
+\begin{lstlisting}
 public void a() {
 	Log("entering a")
 	Log("API call l2 API1")
@@ -241,6 +285,13 @@ public void b() {
 \end{figure}
 \end{column}
 \end{columns}
+\note{
+Need to know:\\
+method enter and exit\\
+API invocation with line\\
+line of subroutines invocation \\
+Injection process relies on \alert{bytecode analysis}
+}
 \end{frame} 
 %
 %
@@ -273,41 +324,8 @@ let the user know what's the \alert{relative cost} of those lines
 %
 \section{Hardware-usage and tail-energy accounting}
 \note{
-Focus on probably the most significant contribution of this work\\
-First, let's define tail energy
+Focus on probably the most significant contribution of this work
 }
-\begin{frame}{Tail-energy}
-\note{
-definition: how possible?\\~\\
-power behaviour can be modelled using a \alert{power state machine}\\
-always \alert{two states at least}\\
-with or without workflow\\~\\
-PAUSE\\~\\
-for many mobile components, a \alert{third state}, the tail-state\\
-entered after a workflow has been processed\\
-stay in that state for a definite time, \alert{tail-time}\\
-spend \alert{tail-energy}
-}
-\begin{columns}
-\begin{column}{0.5\textwidth}
-\begin{definition}
-\begin{itemize}
-\item A component exhibits \alert{tail-behaviour} if it stays in a high power-state \alert{after} processing a workflow.
-\end{itemize}
-\end{definition}
-\end{column}
-
-\begin{column}{0.5\textwidth}
-\begin{figure}
-	\centering
-	\includegraphics[width=\textwidth]{figures/wifi_statemachine.png} 
-	\caption{Power-state machine of a Wi-Fi antenna}
-\end{figure}
-\end{column}
-\end{columns}
-\end{frame}
-%
-%
 \begin{frame}[fragile]{Problem}
 \begin{block}{Aims}
 \begin{itemize}
@@ -476,19 +494,6 @@ injector: \alert{single point of failure}, need to \alert{broaden its reach}\\
 \end{frame}
 %
 %
-\begin{frame}{Summary}
-This work stands as the first software-based tool:
-\begin{enumerate}
-\item Accounting for \alert{tail-energy}
-\item Providing \alert{source-line level} energy estimates
-\item Available as an \alert{open-source} application
-\end{enumerate}
-\vskip0pt plus.5fill
-{\small \orka{} is available at \url{https://github.com/acornet/orka}}
-\note{\alert{what I'd like to leave you with}}
-\end{frame}
-%
-%
 \begin{frame}
   \vfill
   \centering
@@ -500,7 +505,7 @@ This work stands as the first software-based tool:
 %
 %%%%%%%%%%%%%%% OTHER WORK
 %
-\section{Other work}
+\section{Appendice}
 \note{
 other important contributions\\
 Important efforts were made to \alert{refactor}\\
@@ -653,6 +658,19 @@ add delta t in current state to all method in the call stack\\
 update state\\
 loop
 }
+\end{frame}
+%
+%
+\begin{frame}{Summary}
+This work stands as the first software-based tool:
+\begin{enumerate}
+\item Accounting for \alert{tail-energy}
+\item Providing \alert{source-line level} energy estimates
+\item Available as an \alert{open-source} application
+\end{enumerate}
+\vskip0pt plus.5fill
+{\small \orka{} is available at \url{https://github.com/acornet/orka}}
+\note{\alert{what I'd like to leave you with}}
 \end{frame}
 %
 %
