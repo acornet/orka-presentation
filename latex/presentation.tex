@@ -244,7 +244,7 @@ exiting a
 Need to know:\\
 method enter and exit\\
 API invocation with line\\
-line of subroutines invocation 
+line of subroutines invocation for \alert{subroutine accounting}
 }
 \end{frame}  
 %
@@ -295,10 +295,45 @@ Injection process relies on \alert{bytecode analysis}
 \end{frame} 
 %
 %
-\begin{frame}{Analyser} % Replay of Logcat and call stacks
- 
+\begin{frame}[fragile]{Analyser} % Replay of Logcat and call stacks
+\begin{columns}
+%
+\begin{column}{0.5\textwidth}
+\begin{itemize}
+\item Replay the execution trace
+\item Maintain an in memory version of the call stack, including the line of each call
+\item This way, able to tally the API calls within each line
+\end{itemize}
+\end{column}
+%
+\begin{column}{0.4\textwidth}
+\begin{figure}%[language=java]
+\centering
+\begin{lstlisting}[numbers=left]
+public void a() {
+	API1();
+	call b();
+	return;
+}
+public void b() {
+	API2();
+	return;
+}
+\end{lstlisting}
+\label{fig:exfunctions}
+\end{figure}
+\begin{tabular}{c | c}
+   & API2 \\
+   API1 &  b, 7\\
+  a, 2 & a, 3 
+\end{tabular}
+\end{column}
+\end{columns}
+\note{
+}
 \end{frame}  
- 
+ %
+ %
 \begin{frame}[fragile]{Final output}
 \centering
 %[caption=Example of reconstructed source code providing fine-grained guidance]
