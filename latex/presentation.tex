@@ -203,29 +203,28 @@ $$cost(line) = \sum_{API \in line} cost(API)$$
 %
 %
 \begin{frame}[fragile]{Execution trace}
-\begin{columns}
-\begin{column}{0.5\textwidth}
-\begin{figure}%[language=java]
+\begin{figure}
+\centering
+%
+\begin{subfigure}[t]{0.45\textwidth}
+\caption{\texttt{java} code of two example functions}
 \centering
 \begin{lstlisting}[numbers=left]
 public void a() {
-	API1();
-	call b();
-	return;
+  API1();
+  call b();
+  return;
 }
 public void b() {
-	API2();
-	return;
+  API2();
+  return;
 }
 \end{lstlisting}
-\caption{\texttt{java} code of two example functions}
-\label{fig:exfunctions}
-\end{figure}
-\end{column}
+\end{subfigure}
 %
-\begin{column}{0.5\textwidth}
-\begin{figure}
+\begin{subfigure}[t]{0.5\textwidth}
 \centering
+\caption{\logcat{} output produced by the execution of routine \texttt{a}}
 \begin{lstlisting}
 entering a
 API call l2 API1
@@ -235,11 +234,9 @@ API call l7 API2
 exiting b
 exiting a
 \end{lstlisting}
-\caption{\logcat{} output produced by the execution of routine \texttt{a} for fined-grained feedback}
 \label{fig:exlogcat3}
+\end{subfigure}
 \end{figure}
-\end{column}
-\end{columns}
 \note{
 Need to know:\\
 method enter and exit\\
@@ -250,41 +247,37 @@ line of subroutines invocation for \alert{subroutine accounting}
 %
 %
 \begin{frame}[fragile]{Code injection}
-\begin{columns}
-\begin{column}{0.5\textwidth}
-\begin{figure}%[language=java]
+\begin{figure}
+\caption{Injected functions}
+\centering
+\begin{subfigure}[t]{0.49\textwidth}
 \centering
 \begin{lstlisting}
 public void a() {
-	Log("entering a")
-	Log("API call l2 API1")
-	API1();
-	Log("invoking subroutine l3 b")
-	call b();
-	Log("exiting a")
-	return;
+  Log("entering a")
+  Log("API call l2 API1")
+  API1();
+  Log("invoking subroutine l3 b")
+  call b();
+  Log("exiting a")
+  return;
 }
 \end{lstlisting}
-\caption{\texttt{java} code of two example functions}
-\end{figure}
-\end{column}
+\end{subfigure}
 %
-\begin{column}{0.5\textwidth}
-\begin{figure}
+\begin{subfigure}[t]{0.49\textwidth}
 \centering
 \begin{lstlisting}
 public void b() {
-	Log("entering b")
-	Log("API call l7 API2")
-	API2();
-	Log("exiting b")
-	return;
+  Log("entering b")
+  Log("API call l7 API2")
+  API2();
+  Log("exiting b")
+  return;
 }
 \end{lstlisting}
-\caption{Injected functions}
+\end{subfigure}
 \end{figure}
-\end{column}
-\end{columns}
 \note{
 Need to know:\\
 method enter and exit\\
@@ -311,16 +304,15 @@ Injection process relies on \alert{bytecode analysis}
 \centering
 \begin{lstlisting}[numbers=left]
 public void a() {
-	API1();
-	call b();
-	return;
+  API1();
+  call b();
+  return;
 }
 public void b() {
-	API2();
-	return;
+  API2();
+  return;
 }
 \end{lstlisting}
-\label{fig:exfunctions}
 \end{figure}
 \begin{tabular}{c | c}
    & API2 \\
