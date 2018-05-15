@@ -1,0 +1,63 @@
+Disccuss on Tuesday:
+
+
+- asssumption on audience: they didn't read
+
+TODOs:
++ Moved tail energy before related work
++ Added a lign to describe LV work
++ Source-line - analyser: principles + stack diagrams
+- HW eval:
+    - using custom app sending GET every T ms
+    - Aim: verify high level exp
+    - Highlight accounting policy
+
+- Figures alignment S12/13
+- References:
+    - Image S17
+    - LV
+    - Petra
+    - vLens
+    - eProf
+
+Next steps:
+- send the slides early next week
+- plan rehearsal Friday 18th
+- eval of source line / orka?
+- have a look at the feedback
+
+
+Thougths:
+- Defining tail-energy in related work?
+- source line eval?
+
+Structure:
+Problem statement:
+Motivation (optimize Android app for energy efficiency) - 1 slide
+Related work - 1 or 2 slides
+TODO: chose a few contribtions and sumarize -> table?
+Final deliverable - 1 slide
+
+Orka:
+Assumptions - 1s
+Workflow - 1s
+
+Source line accounting:
+What info is needed to solve this? - 1s
+Code injection - 1s
+Logcat - 1s
+Analyser (Replay of Logcat and call stacks) - 1s
+Final output - 1s
+Evaluation? - 1s
+
+Hardware accounting:
+Problem - 1s
+Assumptions - 1s
+What info is needed to solve this? - 1s
+Monitoring the power state of Wi-Fi - 1s
+Implementing the power state machine - 1s
+Network analyser - 1s
+Evaluation - 1s
+
+Conclusion:
+Future work - 1s
