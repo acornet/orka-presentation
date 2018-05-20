@@ -1,7 +1,7 @@
 \input{includes}
-\setbeameroption{show notes on second screen=left}
+%\setbeameroption{show notes on second screen=left}
 %\setbeameroption{show only notes}
-%\setbeameroption{show notes}
+\setbeameroption{show notes}
 \title[Project presentation]{\textsc{Hardware-usage accounting and source-line level energy estimates on Android}}
 \author{Alexandre \textsc{Cornet}\\ {\footnotesize supervised by Dr. Anandha \textsc{Gopalan}}}
 \institute{Eighth International Conference on Smart Grids, Green Communications and IT Energy-aware Technologies}
@@ -14,11 +14,6 @@
 \tikzstyle{optional}=[dashed,fill=gray!50]
 \begin{frame}
 \titlepage
-\note{
-TIMER\\
-one page - def continu
-%\\~\\
-}
 \end{frame}
 %
 \iffalse
@@ -33,7 +28,15 @@ one page - def continu
 %
 \section*{Problem}
 % FIXME text box on top of frame
-\note{What problem did I try to solve?\\
+\note{
+TIMER\\
+one page - def continu
+\\~\\
+Intro\\
+Energy optimization of Android application\\
+How we approached the two specific pbs of...
+\\~\\
+Why are these relevant?\\
 App dev doing well\\
 But keep getting this}
 \begin{frame}{Motivations}
@@ -52,22 +55,27 @@ But keep getting this}
 \note{
 angry feedback regarding the energy consumption of your app\\
 realize energy efficiency matters\\
-decide to optimise your code for it\\%and to  \alert{find energy bugs}
-What are your options?
+decide to optimise your code for it
+\\~\\
+before discussing your options...\\
+TE because
 }
 \end{frame}
 %
 \begin{frame}{An asynchronous power-behaviour: Tail-energy}
 \note{
-definition: how possible?\\~\\
+DEFINITION
+\\~\\
 power behaviour can be modelled using a \alert{power state machine}\\
-always \alert{two states at least}\\
-with or without workflow\\~\\
-PAUSE\\~\\
+always \alert{two states at least}
+\\~\\
 for many mobile components, a \alert{third state}, the tail-state\\
 entered after a workflow has been processed\\
 stay in that state for a definite time, \alert{tail-time}\\
 spend \alert{tail-energy}
+\\~\\
+significant fraction of the energy drain comes from TE\\
+this behaviour is highly relevant to our pb
 }
 \begin{columns}
 \begin{column}{0.5\textwidth}
@@ -102,12 +110,15 @@ tail\_mode\_draw)} tuples
 \end{itemize}
 \end{itemize}
 \note{
+Back to our pb,
 Best option is definitely to use an energy profiler, able to highlight...
-Hardware / model based\\
+divided into 3 categories\\
+DEFINITION Hardware / model based\\
+~\\
 Interesting contributions: vLens, eprof\\
-Eprof: models component energy behaviour using FSM\\
-By design, lead to a financial and practical overhead\\
-software-based tools introduced to move away from this requirements
+%Eprof: \alert{models component energy behaviour using FSM}\\
+Why I mentioned TE\\
+By design, lead to a financial and practical overhead
 }
 \end{frame}
 %
@@ -123,12 +134,15 @@ software-based tools introduced to move away from this requirements
 \end{itemize}
 \end{itemize}
 \note{
-Also uses a FSM modeling of energy behaviour\\
-No tail energy + not available as this work started\\
-Method level feedback: developers still need to investigate\\
-no widely accessible solution\\
-So, what's missing to solve our problem?
-}
+software-based tools introduced to move away from this requirements\\
+~\\
+PETRA\\
+%Also uses a FSM modeling of energy behaviour\\
+No tail energy, so \alert{ignoring a significant fraction} of the drain\\
+Method level feedback: but \alert{still the responsibility of the developers} to find the energy bugs\\
+Recent tool, I was in contact with the team\\
+%+ not available as this work started\\
+So, what's missing to solve our problem?}
 \end{frame}
 %
 %
@@ -140,18 +154,18 @@ An energy-profiler:
 \item Providing hardware-usage and \alert{tail-energy} accounting
 \end{enumerate}
 \note{
-After the reviewing the state-of-art literature, my opinion was there is \alert{a need for}...\\
+%After the reviewing the state-of-art literature, my opinion was there is \alert{a need for}...
+Whta's missing?\\
+~\\
+going to explain how we delivered this
 }
-\note[item]{existing profilers highlight the most costly methods\\
-but \alert{still the responsibility of the developers} to find the energy}
-\note[item]{
-tail-energy is responsible for a \alert{significant fraction} of the drain}
 \end{frame}
 %
 %%%%%%%%%%%%%%% ORKA
 %
 \section{Orka}
-\note{introduce orka}
+\note{introduce orka\\
+software based tool I extended to implement these requirements}
 \begin{frame}{\orka{}: overview}
 \begin{itemize}
 %\item Input: Tested \apk{} file and \monkeyrunner{} test script
@@ -162,14 +176,15 @@ tail-energy is responsible for a \alert{significant fraction} of the drain}
 \end{itemize}
 \item Main assumption:
 \begin{align*}
-cost(routine) &= \sum_{line \in routine} cost(line) \\
-&=  \sum_{line \in routine} \left( \sum_{API \in line} cost(API) \right)
+cost(line) &=  \sum_{API \in line} cost(API) 
 \end{align*}
+%cost(routine) &= \sum_{line \in routine} cost(line) \\
 \item Rely on \alert{instrumentation} and on the Android \alert{emulator}
 \end{itemize}
 \note{
 Based on \alert{LV work}, it approximates\\
 Based on this assumption, it \alert{tallies calls} to the A. API\\
+Cost method = sum cost line\\
 Rely on \alert{instrumentation}
 }
 \end{frame}
@@ -179,14 +194,15 @@ Rely on \alert{instrumentation}
 \begin{figure}
         \includegraphics[width=\textwidth]{figures/orkaworkflow.pdf}
 \end{figure}
-\note{in and out\\
-how does this work?}
+\note{
+Instrumentation: insert call to the Log API to record information needed to compute costs}
 \end{frame}
 %
 %%%%%%%%%%%%%%% SOURCE-LINE
 %
 \section{Source-line level energy estimates}
 \note{
+How we were able to compute source line level energy estimates based on these assumptions\\
 Goal: generates a reconstructed source-code with line-level estimates
 }
 %
@@ -238,10 +254,10 @@ exiting a
 \end{subfigure}
 \end{figure}
 \note{
-Need to know:\\
-method enter and exit\\
-API invocation with line\\
-line of subroutines invocation for \alert{subroutine accounting}
+Let's look at a simple example\\
+DESCRIBE FUNCTIONS\\
+DESCRIBE COST ATTRIBUTION\\
+All information is contained is this stack trace
 }
 \end{frame}  
 %
@@ -279,24 +295,26 @@ public void b() {
 \end{subfigure}
 \end{figure}
 \note{
-Need to know:\\
+What do we need to inject\\
 method enter and exit\\
 API invocation with line\\
 line of subroutines invocation \\
-Injection process relies on \alert{bytecode analysis}
+Injection process relies on \alert{bytecode analysis}\\
+Application is decompile, injected and recompiled\\
+What is Log
 }
 \end{frame} 
 %
 %
 \begin{frame}[fragile]{Analyser} % Replay of Logcat and call stacks
-\begin{columns}
-%
-\begin{column}{0.5\textwidth}
+%\begin{columns}
+%\begin{column}{0.5\textwidth}
 \begin{itemize}
 \item Replay the execution trace
 \item Maintain an in memory version of the call stack, including the line of each call
 \item This way, able to tally the API calls within each line
 \end{itemize}
+\iffalse
 \end{column}
 %
 \begin{column}{0.4\textwidth}
@@ -321,6 +339,7 @@ public void b() {
 \end{tabular}
 \end{column}
 \end{columns}
+\fi
 \note{
 }
 \end{frame}  
@@ -342,8 +361,8 @@ method RecList.onCreate, Average cost: 0.0197754308, Calls: 1.0
   21.80% l260 calling android.os.Bundle.getString
 \end{lstlisting}}
 \note{
-reconstructed code includes the lines for which we have an energy estimate\\
-let the user know what's the \alert{relative cost} of those lines
+DESCRIBE\\
+for clarity, uses \alert{relative cost}
 }
 \end{frame}
 %
@@ -379,13 +398,13 @@ MainActivity$SendGet.run {ACTIVE: 1.57, IDLE: 0.84,
 \end{itemize}
 \end{block}
 \note{
-difficult to interpret: don't know what parts of the code are responsible for the drain\\
-tail-energy is responsible for a \alert{significant fraction} of the drain\\~\\
-Map: THIS method is responsible for THIS drain
+MAP: e.g Wifi is drain the battery: where does this happen?
+\\~\\
+For one method, tuples represent the \alert{time spent in each mode } by a component, which is attributed to the method\\
+Because of the method XX, the component spent ...
+\\~\\
 I/O consumes the most energy -- only Wi-FI\\
-Simple relation between time and energy -- focus on time\\~\\
-For one method, tuples represent the \alert{time spent in each mode } by the Wi-Fi antenna, which is attributed to the method\\
-Because of the method XX, the antenna spent ...
+Simple relation between time and energy -- focus on time
 }
 \end{frame}
 %
@@ -403,9 +422,9 @@ Because of the method XX, the antenna spent ...
 \end{itemize}
 \end{block}
 \note{
+Refer to FSM\\
 call-stack: know which routines are executed at any time\\
-Leave call-stack to QA\\~\\
-
+%Leave call-stack to QA\\~\\
 Wifi power state: Not possible to monitor directly as not logged by OS\\
 }
 \end{frame}
@@ -510,7 +529,7 @@ MainActivity$SendGet.run {ACTIVE: 1.57, IDLE: 0.84,
 \item Efficiency decreases when period gets close to tail-time
 \end{itemize}
 \item Tested against a custom app, sending network requests at a chosen frequency
-\item Orka able to detect the method sending the request
+\item Orka is able to detect the method sending the request.
 \item Need to improve accounting policy: \alert{last-trigger policy}
 \end{itemize}
 \note{
@@ -524,6 +543,7 @@ MainActivity$SendGet.run {ACTIVE: 1.57, IDLE: 0.84,
 %%%%%%%%%%%%%%% CONCLUSION
 %
 \section{Conclusion}
+\iffalse
 \begin{frame}{Future work}
 \begin{itemize}
 \item Tail-energy: implement last-trigger policy and extend to other components
@@ -534,6 +554,7 @@ MainActivity$SendGet.run {ACTIVE: 1.57, IDLE: 0.84,
 injector: \alert{single point of failure}, need to \alert{broaden its reach}\\
 }
 \end{frame}
+\fi
 %
 %
 \begin{frame}[allowframebreaks]

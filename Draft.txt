@@ -1,7 +1,8 @@
 Disccuss on Tuesday:
 
+Add helper slide call stack
+Double check appendix slides
 
-- asssumption on audience: they didn't read
 
 TODOs:
 + Moved tail energy before related work
